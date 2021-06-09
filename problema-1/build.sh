@@ -1,0 +1,1 @@
+gcc problema-1.c -o primos
