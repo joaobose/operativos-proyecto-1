@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -9,6 +10,7 @@ typedef int bool;
 bool thread = FALSE;
 bool process = FALSE;
 int N = 1;
+char file[] = "";
 
 void validation_rutine();
 void master();
@@ -24,6 +26,8 @@ int main(int argc, char *argv[])
     {
         switch (opt)
         {
+        case TRUE:
+            strcpy(file, optarg);
         case 't':
             thread = TRUE;
             break;
