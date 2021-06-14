@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <stbool.h>
 #include <pthread.h>
 
 #define TRUE 1
@@ -26,6 +27,7 @@ void process_primes();
 void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N]);
 int count_lines(FILE *file);
 void primes_worker(void *param);
+bool is_prime(int number);
 
 int main(int argc, char *argv[])
 {
@@ -149,7 +151,8 @@ void primes_worker(void *param)
     int u = upper_bounds[i];
 }
 
-int count_lines(FILE *file) {
+int count_lines(FILE *file)
+{
     int c, count = 0;
 
     for (c = getc(input_file); c != EOF; c = getc(input_file)) {
@@ -161,4 +164,18 @@ int count_lines(FILE *file) {
     rewind(input_file);
 
     return count;
+}
+
+bool is_prime(int number)
+{
+    if(number < 2) return false; // Los primos son mayores que 1
+
+    // Chequear por cada numero menor que sqrt(number) si existe algun divisor
+    for(int div = 2; div * div <= number; div++){
+        if(number % div == 0){
+	        return false;
+	    }
+    }
+
+    return true; // Si no existe un divisor, entonces es primo
 }
