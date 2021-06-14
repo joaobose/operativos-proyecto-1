@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <pthread.h>
 
 #define TRUE 1
 #define FALSE 0
@@ -24,6 +25,7 @@ void thread_primes();
 void process_primes();
 void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N]);
 int count_lines(FILE *file);
+void primes_worker(void *param);
 
 int main(int argc, char *argv[])
 {
@@ -90,6 +92,8 @@ void master()
 
     int file_length = count_lines(input_file);
 
+    fclose(input_file);
+
     compute_bounds(file_length, lower_bounds, upper_bounds);
 
     if (thread)
@@ -106,9 +110,18 @@ void thread_primes()
 {
     // do thread stuff
     printf("DEBUG: Working with threads");
+    pthread_t threads[N];
+
+    for(int i = 0; i < N; i++) {
+        pthread_create(&threads[i], NULL, (void *) primes_worker, (void *) i);
+    }
+
+    for(int i = 0; i < N; i++) {
+        pthread_join(threads[i], NULL);
+    }
 }
 
-void process_primes()
+void process_primes(int i)
 {
     // do process stuff
     printf("DEBUG: Working with process");
@@ -127,9 +140,13 @@ void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N])
     upper_out[N - 1] = file_lenght;
 }
 
-void primes_worker(int lower_bound, int upper_bound)
+void primes_worker(void *param)
 {
+    int i = (int) param;
     // Worker funtion
+
+    int l = lower_bounds[i];
+    int u = upper_bounds[i];
 }
 
 int count_lines(FILE *file) {

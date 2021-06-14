@@ -1,1 +1,1 @@
-gcc problema-1.c -o primos
+gcc problema-1.c -o primos -pthread
