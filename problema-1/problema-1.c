@@ -123,14 +123,14 @@ void primes_worker(int lower_bound, int upper_bound)
 
 bool is_prime(int number)
 {
-	if(number < 2) return false; // Los primos son mayores que 1
+    if(number < 2) return false; // Los primos son mayores que 1
 
-	// Chequear por cada numero menor que sqrt(number) si existe algun divisor
-	for(int div = 2; div * div <= number; div++){
-		if(number % div == 0){
-			return false;
-		}
+    // Chequear por cada numero menor que sqrt(number) si existe algun divisor
+    for(int div = 2; div * div <= number; div++){
+        if(number % div == 0){
+	    return false;
 	}
+    }
 
-	return true; // Si no existe un divisor, entonces es primo
+    return true; // Si no existe un divisor, entonces es primo
 }
