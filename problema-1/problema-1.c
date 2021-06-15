@@ -2,12 +2,11 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <stbool.h>
+#include <stdbool.h>
 #include <pthread.h>
 
 #define TRUE 1
 #define FALSE 0
-typedef int bool;
 #define MAXN 10
 
 bool thread = FALSE;
@@ -20,6 +19,8 @@ FILE *input_file;
 int lower_bounds[MAXN];
 int upper_bounds[MAXN];
 
+int *numbers;
+
 void validation_rutine();
 void master();
 void thread_primes();
@@ -28,6 +29,7 @@ void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N]);
 int count_lines(FILE *file);
 void primes_worker(void *param);
 bool is_prime(int number);
+void load_numbers(int file_length);
 
 int main(int argc, char *argv[])
 {
@@ -94,6 +96,8 @@ void master()
 
     int file_length = count_lines(input_file);
 
+    load_numbers(file_length);
+
     fclose(input_file);
 
     compute_bounds(file_length, lower_bounds, upper_bounds);
@@ -145,10 +149,21 @@ void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N])
 void primes_worker(void *param)
 {
     int i = (int) param;
-    // Worker funtion
+
+    char output_filename[10];
+
+    sprintf(output_filename, "./%d.txt", i);
+
+    FILE *output_file = fopen(output_filename, "w");
 
     int l = lower_bounds[i];
     int u = upper_bounds[i];
+
+    for(int j = l; j < u; j++) {
+        fprintf(output_file, "%d %d\n", numbers[j], is_prime(numbers[j]));
+    }
+
+    fclose(output_file);
 }
 
 int count_lines(FILE *file)
@@ -164,6 +179,15 @@ int count_lines(FILE *file)
     rewind(input_file);
 
     return count;
+}
+
+void load_numbers(int file_length)
+{
+    numbers = malloc(sizeof(int)*file_length);
+
+    for(int i = 0; i < file_length; i++) {
+        fscanf(input_file, "%d", &numbers[i]);
+    }
 }
 
 bool is_prime(int number)
