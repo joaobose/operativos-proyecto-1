@@ -90,8 +90,9 @@ void master()
 {
     input_file = fopen(filename, "r");
 
-    if (input_file == NULL) {
-        printf("Could not open file");
+    if (input_file == NULL)
+    {
+        printf("Error: Could not open file");
         exit(1);
     }
 
@@ -115,30 +116,39 @@ void master()
 
 void thread_primes()
 {
-    // do thread stuff
-    //printf("DEBUG: Working with threads\n");
-    
+
     pthread_t threads[N];
 
-    for(int i = 0; i < N; i++) {
-        pthread_create(&threads[i], NULL, (void *) primes_worker, (void *) i);
+    for (int i = 0; i < N; i++)
+    {
+        pthread_create(&threads[i], NULL, (void *)primes_worker, (void *)i);
     }
 
-    for(int i = 0; i < N; i++) {
+    for (int i = 0; i < N; i++)
+    {
         pthread_join(threads[i], NULL);
     }
 }
 
-void process_primes(int i)
+void process_primes()
 {
-    // do process stuff
-    //printf("DEBUG: Working with process\n");
+    pid_t pids[N];
 
-    for(int i = 0; i < N; i++) {
-        if (fork() == 0){
-            primes_worker((void *) i);
-            break;
+    for (int i = 0; i < N; i++)
+    {
+        pid_t pid = fork();
+        if (pid == 0)
+        {
+            primes_worker((void *)i);
+            return;
         }
+
+        pids[i] = pid;
+    }
+
+    for (int i = 0; i < N; i++)
+    {
+        waitpid(pids[i], NULL, 0);
     }
 }
 
@@ -157,7 +167,7 @@ void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N])
 
 void primes_worker(void *param)
 {
-    int i = (int) param;
+    int i = (int)param;
 
     char output_filename[10];
 
@@ -168,7 +178,8 @@ void primes_worker(void *param)
     int l = lower_bounds[i];
     int u = upper_bounds[i];
 
-    for(int j = l; j < u; j++) {
+    for (int j = l; j < u; j++)
+    {
         fprintf(output_file, "%d %d\n", numbers[j], is_prime(numbers[j]));
     }
 
@@ -179,8 +190,10 @@ int count_lines(FILE *file)
 {
     int c, count = 0;
 
-    for (c = getc(input_file); c != EOF; c = getc(input_file)) {
-        if (c == '\n') {
+    for (c = getc(input_file); c != EOF; c = getc(input_file))
+    {
+        if (c == '\n')
+        {
             count++;
         }
     }
@@ -192,23 +205,27 @@ int count_lines(FILE *file)
 
 void load_numbers(int file_length)
 {
-    numbers = malloc(sizeof(int)*file_length);
+    numbers = malloc(sizeof(int) * file_length);
 
-    for(int i = 0; i < file_length; i++) {
+    for (int i = 0; i < file_length; i++)
+    {
         fscanf(input_file, "%d", &numbers[i]);
     }
 }
 
 bool is_prime(int number)
 {
-    if(number < 2) return false; // Los primos son mayores que 1
+    if (number < 2)
+        return false; // Prime numbers are greater than 1
 
-    // Chequear por cada numero menor que sqrt(number) si existe algun divisor
-    for(int div = 2; div * div <= number; div++){
-        if(number % div == 0){
-	        return false;
-	    }
+    // Check for each number smaller than sqrt(number) if a divisor exists
+    for (int div = 2; div * div <= number; div++)
+    {
+        if (number % div == 0)
+        {
+            return false;
+        }
     }
 
-    return true; // Si no existe un divisor, entonces es primo
+    return true; // If no divisor exists, the number is prime
 }
