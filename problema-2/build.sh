@@ -1,0 +1,1 @@
+gcc problema-2.c -o primosn -pthread

@@ -1,0 +1,1 @@
+./primosn ./entrada.txt -n 10
