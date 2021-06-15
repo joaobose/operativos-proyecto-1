@@ -42,6 +42,7 @@ int main(int argc, char *argv[])
         {
         case TRUE:
             strcpy(filename, optarg);
+            break;
         case 't':
             thread = TRUE;
             break;
@@ -115,7 +116,7 @@ void master()
 void thread_primes()
 {
     // do thread stuff
-    printf("DEBUG: Working with threads");
+    printf("DEBUG: Working with threads\n");
     pthread_t threads[N];
 
     for(int i = 0; i < N; i++) {
@@ -130,7 +131,14 @@ void thread_primes()
 void process_primes(int i)
 {
     // do process stuff
-    printf("DEBUG: Working with process");
+    printf("DEBUG: Working with process\n");
+
+    for(int i = 0; i < N; i++) {
+        if (fork() == 0){
+            primes_worker((void *) i);
+            break;
+        }
+    }
 }
 
 void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N])
@@ -148,6 +156,7 @@ void compute_bounds(int file_lenght, int lower_out[N], int upper_out[N])
 
 void primes_worker(void *param)
 {
+    printf("HOLA");
     int i = (int) param;
 
     char output_filename[10];

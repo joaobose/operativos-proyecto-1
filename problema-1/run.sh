@@ -1,1 +1,1 @@
-./primos ./entrada.txt -t -n 10
+./primos ./entrada.txt -p -n 10
