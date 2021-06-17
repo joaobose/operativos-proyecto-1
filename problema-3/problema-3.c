@@ -15,6 +15,7 @@ bool thread = FALSE;
 bool process = FALSE;
 int N = 1;
 char filename[] = "";
+pid_t master_pid;
 
 FILE *input_file;
 
@@ -91,7 +92,9 @@ void validation_rutine()
 
 void INThandler(int sig)
 {
-    printf("\nI’m sorry Dave. I’m afraid I can’t do that.\n");
+    if (master_pid == getpid()) {
+        printf("\nI’m sorry Dave. I’m afraid I can’t do that.\n");
+    }
 }
 
 void master()
@@ -118,6 +121,8 @@ void master()
     }
     else
     {
+        master_pid = getpid();
+
         signal(SIGINT, INThandler);
         process_primes();
     }
